@@ -1,1 +1,2 @@
-# Minecraft
+# Hazel
+Hazel Engine
