@@ -48,10 +48,9 @@ namespace Hazel {
 
 		auto indexBuffer = Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		s_VertexArray->SetIndexBuffer(indexBuffer);
-
 		s_ShaderLibrary.Load("assets/shaders/VertexPos.glsl");
-		s_ShaderLibrary.Load("assets/shaders/Skybox.glsl");
 		s_ShaderLibrary.Load("assets/shaders/Textured3D.glsl");
+		s_ShaderLibrary.Load("assets/shaders/Skybox.glsl");
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -95,7 +94,7 @@ namespace Hazel {
 
 	void Renderer::DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size)
 	{
-		texture->Bind(0);
+		texture->Bind();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
 		Submit(s_ShaderLibrary.Get("Textured3D"), s_VertexArray, transform);

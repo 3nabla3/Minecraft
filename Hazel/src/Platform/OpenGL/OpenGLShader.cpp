@@ -52,8 +52,10 @@ namespace Hazel {
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
 		HZ_PROFILE_FUNCTION();
+
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
+
 		if (in)
 		{
 			in.seekg(0, std::ios::end);
@@ -62,8 +64,9 @@ namespace Hazel {
 			in.read(&result[0], result.size());
 			in.close();
 		}
-		else
-			HZ_CORE_ERROR("Could not open file '{0}'", filepath);
+		
+		HZ_CORE_ASSERT(result.size() > 0, "Could not open file or file is empty");
+
 
 		return result;
 	}

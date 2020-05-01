@@ -6,7 +6,7 @@ workspace "Hazel"
 		"Release",
 		"Dist"
 	}
-	startproject "Sandbox"
+	startproject "Minecraft"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
