@@ -17,7 +17,7 @@ namespace Hazel {
 		virtual inline void SetDepthFuncLessThanOrEqualTo() override { glDepthFunc(GL_LEQUAL); }
 		virtual inline void SetDepthFuncLessThan() override { glDepthFunc(GL_LESS); }
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) override;
 
 	};
 }

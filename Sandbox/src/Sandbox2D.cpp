@@ -12,7 +12,7 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::OnAttach()
 {
 	HZ_PROFILE_FUNCTION();
-	m_Texture = Hazel::Texture2D::Create("assets/textures/checkerboard.png");
+	m_Texture = Hazel::Texture2D::Create("assets/textures/DonkeyKong.png");
 }
 
 void Sandbox2D::OnDetach()
@@ -23,12 +23,15 @@ void Sandbox2D::OnDetach()
 void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 {
 	m_CameraController.OnUpdate(ts);
-	
+
+	Hazel::RenderCommand::SetClearColor({ 1.0f, 0.0f, 1.0f, 1.0f });
 	Hazel::RenderCommand::Clear();
 
 	Hazel::Renderer2D::BeginScene(m_CameraController.GetCamera());
-	Hazel::Renderer2D::DrawQuad(m_TexturePosition, m_Texture, m_TextureSize, m_TextureColor, 10.0f);
-	Hazel::Renderer2D::DrawRotatedQuad(m_SquarePosition, 3.141f / 4, m_SquareColor, m_SquareSize);
+	Hazel::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.2f, 0.3f, 1.0f }, { 0.8f, 0.8f });
+	Hazel::Renderer2D::DrawRotatedQuad({  0.8f, -0.5f }, 3.1415f / 4.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.3f, 0.3f });
+	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f }, m_Texture, { 1.0f,1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 10.0f);
+	Hazel::Renderer2D::DrawRotatedQuad({ -0.5f, -0.5f }, 3.1415f, m_Texture, { 1.2f,1.2f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 1.0f);
 	Hazel::Renderer2D::EndScene();
 }
 

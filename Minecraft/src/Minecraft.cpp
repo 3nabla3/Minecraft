@@ -1,6 +1,7 @@
 #include <Hazel.h>
 #include "Hazel/Core/EntryPoint.h"
 #include "Layer3D.h"
+#include "Layer2D.h"
 
 class MinecraftApp : public Hazel::Application
 {
@@ -12,6 +13,7 @@ public:
 		GetWindow().EnableCursor(false);
 
 		PushLayer(new Layer3D());
+		PushOverlay(new Layer2D());
 	}
 
 	void MinecraftApp::OnEvent(Hazel::Event& e)

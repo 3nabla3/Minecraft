@@ -139,14 +139,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Layer2D.cpp" />
     <ClCompile Include="src\Layer3D.cpp" />
     <ClCompile Include="src\Minecraft.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Layer2D.h" />
     <ClInclude Include="src\Layer3D.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\Crosshair.glsl" />
     <None Include="assets\shaders\Skybox.glsl" />
+    <None Include="assets\shaders\Textured2D.glsl" />
     <None Include="assets\shaders\Textured3D.glsl" />
     <None Include="assets\shaders\VertexPos.glsl" />
   </ItemGroup>

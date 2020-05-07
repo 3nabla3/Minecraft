@@ -28,19 +28,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\FlatColor.glsl" />
-    <None Include="assets\shaders\Texture.glsl" />
-    <None Include="assets\shaders\Triangle.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\textures\Checkerboard.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\DonkeyKong.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="assets\textures\Logo.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <None Include="assets\shaders\VertexPos.glsl" />
+    <None Include="assets\shaders\Textured3D.glsl" />
+    <None Include="assets\shaders\Skybox.glsl" />
+    <None Include="assets\shaders\Textured2D.glsl" />
   </ItemGroup>
 </Project>

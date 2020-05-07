@@ -22,7 +22,7 @@ namespace Hazel {
 		virtual void SetDepthFuncLessThanOrEqualTo() = 0;
 		virtual void SetDepthFuncLessThan() = 0;
 
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) = 0;
 
 		static inline API GetAPI() { return s_API; }
 	private:

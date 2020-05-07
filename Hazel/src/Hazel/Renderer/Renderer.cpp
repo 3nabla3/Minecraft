@@ -1,7 +1,6 @@
 #include "hzpch.h"
 #include "Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-#include "Renderer2D.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 namespace Hazel {
@@ -15,7 +14,6 @@ namespace Hazel {
 	{
 		HZ_PROFILE_FUNCTION();
 		RenderCommand::Init();
-		Renderer2D::Init();
 
 		s_VertexArray = Hazel::VertexArray::Create();
 
@@ -53,6 +51,10 @@ namespace Hazel {
 		s_ShaderLibrary.Load("assets/shaders/Skybox.glsl");
 	}
 
+	void Renderer::Shutdown()
+	{
+	}
+
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewport(0, 0, width, height);
@@ -67,7 +69,6 @@ namespace Hazel {
 
 	void Renderer::EndScene()
 	{
-		DrawSkybox(s_SceneData->Skybox);
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4 transform)
