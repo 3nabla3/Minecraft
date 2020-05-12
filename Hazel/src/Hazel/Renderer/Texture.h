@@ -30,6 +30,7 @@ namespace Hazel {
 	class TextureCubeMap : public Texture
 	{
 	public:
+		static Ref<TextureCubeMap> Create(uint32_t size);
 		static Ref<TextureCubeMap> Create(const std::vector<std::string>& filepaths);
 	};
 

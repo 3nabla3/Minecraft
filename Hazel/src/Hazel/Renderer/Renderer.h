@@ -19,29 +19,31 @@ namespace Hazel {
 		static void BeginScene(const PerspectiveCamera& camera);
 		static void EndScene();
 
-		static inline void SetSkybox(const Ref<TextureCubeMap>& skybox) { s_SceneData->Skybox = skybox; }
-		static inline const Ref<TextureCubeMap>& GetSkybox() { return s_SceneData->Skybox; }
+		static void SetSkybox(const Ref<TextureCubeMap>& skybox);
+		static const Ref<TextureCubeMap>& GetSkybox();
 		
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4 transform = glm::mat4(1.0f));
 
 		static void DrawColoredCube(const glm::vec3& position, const glm::vec4& color, const glm::vec3& size);
 		static void DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size);
+		static void DrawWhiteCube(const glm::vec3& position);
 
 		static void DrawSkybox(const Ref<TextureCubeMap>& texture);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
-	private:
-		struct SceneData
+
+		// Stats
+		struct Statistics
 		{
-			glm::mat4 ProjectionViewMatrix;
-			glm::mat4 ProjectionMatrix;
-			glm::mat4 ViewMatrix;
-			Ref<TextureCubeMap> Skybox;
+			uint32_t DrawCalls = 0;
+			uint32_t CubeCount = 0;
+
+			uint32_t GetTotalVertexCount() { return CubeCount * 8; }
+			uint32_t GetTotalIndexCount() { return CubeCount * 36; }
 		};
 
-		static SceneData* s_SceneData;
-		static Ref<VertexArray> s_VertexArray;
-		static ShaderLibrary s_ShaderLibrary;
+		static void ResetStats();
+		static Statistics GetStats();
 	};
 
 }

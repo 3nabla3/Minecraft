@@ -55,7 +55,7 @@ namespace Hazel {
 			dataFormat = GL_RGB;
 		}
 
-		m_InternalFormat =internalFormat;
+		m_InternalFormat = internalFormat;
 		m_DataFormat = dataFormat;
 		
 		HZ_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
@@ -100,8 +100,23 @@ namespace Hazel {
 	/// OpenGLTextureCubeMap ////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	
+	OpenGLTextureCubeMap::OpenGLTextureCubeMap(uint32_t size)
+		:m_Size(size)
+	{
+		m_InternalFormat = GL_RGBA8, m_DataFormat = GL_RGBA;
+
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID);
+		glTextureStorage3D(m_RendererID, 1, m_InternalFormat, size, size, size);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+
 	OpenGLTextureCubeMap::OpenGLTextureCubeMap(const std::vector<std::string>& filepaths)
-		:m_Width(0), m_Height(0)
+		:m_Size(0), m_Path(filepaths[0])
 	{
 		HZ_CORE_ASSERT(filepaths.size() == 6, "Exactly 6 filepaths should be provided!");
 
@@ -119,6 +134,8 @@ namespace Hazel {
 			data = stbi_load(filepaths[i].c_str(), &width, &height, &channels, 0);
 
 			HZ_CORE_ASSERT(data, "Failed to load image!");
+			HZ_CORE_ASSERT(width == height, "Textures should be square!");
+
 			if (channels == 4)
 			{
 				internalFormat = GL_RGBA8;
@@ -141,6 +158,10 @@ namespace Hazel {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		m_Size = width;
+		m_DataFormat = dataFormat;
+		m_InternalFormat = internalFormat;
 	}
 
 	OpenGLTextureCubeMap::~OpenGLTextureCubeMap()
@@ -155,5 +176,14 @@ namespace Hazel {
 
 	void OpenGLTextureCubeMap::SetData(void* data, uint32_t size)
 	{
+		HZ_CORE_ASSERT(size == m_Size * m_Size * (m_DataFormat == GL_RGBA ? 4 : 3), "Data must be entire texture!");
+		
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+
+		for (unsigned int i = 0; i < 6; i++)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+				0, GL_RGBA8, m_Size, m_Size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
 	}
 }

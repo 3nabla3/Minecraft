@@ -20,10 +20,11 @@ void main()
 out vec4 color;
 
 uniform samplerCube u_Sample;
+uniform vec4 u_Color;
 
 in vec3 v_Position;
 
 void main()
 {
-	color = texture(u_Sample, v_Position);
+	color = texture(u_Sample, v_Position) * u_Color;
 }

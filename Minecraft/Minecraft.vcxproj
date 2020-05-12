@@ -152,7 +152,6 @@
     <None Include="assets\shaders\Skybox.glsl" />
     <None Include="assets\shaders\Textured2D.glsl" />
     <None Include="assets\shaders\Textured3D.glsl" />
-    <None Include="assets\shaders\VertexPos.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

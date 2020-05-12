@@ -79,7 +79,6 @@ namespace Hazel {
 
 			if (!m_Minimized)
 			{
-				HZ_PROFILE_SCOPE("Combined layer updates");
 				{
 					HZ_PROFILE_SCOPE("Layer updates");
 					for (Layer* layer : m_LayerStack)
@@ -93,6 +92,7 @@ namespace Hazel {
 				}
 				m_ImGuiLayer->End();
 			}
+
 			m_Window->OnUpdate();
 		}
 	}

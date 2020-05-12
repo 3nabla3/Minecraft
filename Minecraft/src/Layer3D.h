@@ -1,12 +1,14 @@
 #pragma once
 #include <Hazel.h>
+#include <imgui/imgui.h>
 
 class Layer3D : public Hazel::Layer
 {
 public:
 	Layer3D();
-	void OnUpdate(Hazel::TimeStep ts);
-	void OnEvent(Hazel::Event& e);
+	void OnUpdate(Hazel::TimeStep ts) override;
+	void OnEvent(Hazel::Event& e) override;
+	void OnImGuiRender() override;
 	static Hazel::Ref<Hazel::TextureCubeMap> UploadTexture(const std::string& filepath);
 
 private:
@@ -14,7 +16,7 @@ private:
 
 	Hazel::Ref<Hazel::TextureCubeMap> m_Skybox;
 
-	Hazel::Ref<Hazel::TextureCubeMap> m_TextureGrass;
+	Hazel::Ref<Hazel::TextureCubeMap> m_TextureDirt;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureSand;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureTNT;
 

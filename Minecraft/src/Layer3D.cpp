@@ -3,7 +3,7 @@
 Layer3D::Layer3D()
 	:Layer("Layer 3D"), m_Controller(45.0f, 1.778f, { 0.0f, 3.0f, 0.0f })
 {
-	m_TextureGrass = UploadTexture("dirt");
+	m_TextureDirt = UploadTexture("dirt");
 	m_TextureSand = UploadTexture("sand");
 	m_TextureTNT = UploadTexture("tnt");
 
@@ -17,19 +17,24 @@ Layer3D::Layer3D()
 		});
 }
 
+
+
 void Layer3D::OnUpdate(Hazel::TimeStep ts)
 {
 	m_Controller.OnUpdate(ts);
 
+	Hazel::RenderCommand::SetClearColor({ 0.0f, 1.0f, 0.0f, 1.0f });
 	Hazel::RenderCommand::Clear();
+	Hazel::Renderer::ResetStats();
 
 	Hazel::Renderer::BeginScene(m_Controller.GetCamera());
 	for (int x = 0; x < 3; x++)
 		for (int z = 0; z < 3; z++)
 		{
-			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 0.0f, -z * 2.0f }, m_TextureGrass, { 1.0f,1.0f,1.0f });
+			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 0.0f, -z * 2.0f }, m_TextureDirt, { 1.0f,1.0f,1.0f });
 			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 10.0f, -z * 2.0f }, m_TextureSand, { 1.0f,1.0f,1.0f });
 			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 20.0f, -z * 2.0f }, m_TextureTNT, { 1.0f,1.0f,1.0f });
+			Hazel::Renderer::DrawColoredCube({ -x * 2.0f , 30.0f, -z * 2.0f }, { 1.0f, 0.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f });
 		}
 	Hazel::Renderer::DrawSkybox(m_Skybox);
 	Hazel::Renderer::EndScene();
@@ -38,6 +43,17 @@ void Layer3D::OnUpdate(Hazel::TimeStep ts)
 void Layer3D::OnEvent(Hazel::Event& e)
 {
 	m_Controller.OnEvent(e);
+}
+
+void Layer3D::OnImGuiRender()
+{
+	using namespace ImGui;
+	auto stats = Hazel::Renderer::GetStats();
+
+	Begin("Render stats");
+	Text("Draw calls %d", stats.DrawCalls);
+	Text("Cube count %d", stats.CubeCount);
+	End();
 }
 
 Hazel::Ref<Hazel::TextureCubeMap> Layer3D::UploadTexture(const std::string& name)

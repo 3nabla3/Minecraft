@@ -5,17 +5,36 @@
 
 namespace Hazel {
 
-	Ref<VertexArray> Renderer::s_VertexArray;
-	ShaderLibrary Renderer::s_ShaderLibrary;
+	struct RendererData
+	{
+		constexpr static uint32_t s_MaxQuads = 100;
+		constexpr static uint32_t s_MaxVerticies = s_MaxQuads * 8;
+		constexpr static uint32_t s_MaxIndices = s_MaxQuads * 36;
+		constexpr static uint32_t s_MaxTextureSlots = 32; // TODO: RenderCaps
 
-	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
+		Ref<VertexArray> CubeVertexArray;
+		Ref<VertexBuffer> CubeVertexBuffer;
+		Ref<TextureCubeMap> WhiteTexture;
+		Ref<TextureCubeMap> Skybox;
+
+		// keeping these in ram is useful for rendering static objects
+		glm::mat4 ProjectionViewMatrix = glm::mat4(1.0f);
+		glm::mat4 ProjectionMatrix = glm::mat4(1.0f);
+		glm::mat4 ViewMatrix = glm::mat4(1.0f);
+
+		ShaderLibrary ShaderLibrary;
+
+		Renderer::Statistics stats;
+	};
+
+	static RendererData s_Data;
 
 	void Renderer::Init()
 	{
 		HZ_PROFILE_FUNCTION();
 		RenderCommand::Init();
 
-		s_VertexArray = Hazel::VertexArray::Create();
+		s_Data.CubeVertexArray = Hazel::VertexArray::Create();
 
 		float vertecies[] = {
 			-1.0f, -1.0f, -1.0f, // 0 front bottom left
@@ -33,7 +52,7 @@ namespace Hazel {
 		vertexBuffer->SetLayout({
 			{Hazel::ShaderDataType::Float3, "a_Position"}
 			});
-		s_VertexArray->AddVertexBuffer(vertexBuffer);
+		s_Data.CubeVertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[36] = {
 			0, 1, 2, 2, 3, 0, // front
@@ -45,10 +64,14 @@ namespace Hazel {
 		};
 
 		auto indexBuffer = Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
-		s_VertexArray->SetIndexBuffer(indexBuffer);
-		s_ShaderLibrary.Load("assets/shaders/VertexPos.glsl");
-		s_ShaderLibrary.Load("assets/shaders/Textured3D.glsl");
-		s_ShaderLibrary.Load("assets/shaders/Skybox.glsl");
+		s_Data.CubeVertexArray->SetIndexBuffer(indexBuffer);
+
+		s_Data.ShaderLibrary.Load("assets/shaders/Textured3D.glsl");
+		s_Data.ShaderLibrary.Load("assets/shaders/Skybox.glsl");
+
+		s_Data.WhiteTexture = TextureCubeMap::Create(1);
+		uint32_t data = 0xffffffff;
+		s_Data.WhiteTexture->SetData(&data, 4);
 	}
 
 	void Renderer::Shutdown()
@@ -62,56 +85,85 @@ namespace Hazel {
 
 	void Renderer::BeginScene(const PerspectiveCamera& camera)
 	{
-		s_SceneData->ProjectionViewMatrix = camera.GetProjectionViewMatrix();
-		s_SceneData->ProjectionMatrix = camera.GetProjectionMatrix();
-		s_SceneData->ViewMatrix = camera.GetViewMatrix();
+		s_Data.ProjectionViewMatrix = camera.GetProjectionViewMatrix();
+		s_Data.ProjectionMatrix = camera.GetProjectionMatrix();
+		s_Data.ViewMatrix = camera.GetViewMatrix();
 	}
 
 	void Renderer::EndScene()
 	{
 	}
 
+	void Renderer::SetSkybox(const Ref<TextureCubeMap>& skybox)
+	{
+		s_Data.Skybox = skybox;
+	}
+
+	const Ref<TextureCubeMap>& Renderer::GetSkybox()
+	{
+		return s_Data.Skybox;
+	}
+
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4 transform)
 	{
 		shader->Bind();
-		shader->SetMat4("u_ProjectionView", s_SceneData->ProjectionViewMatrix);
+		shader->SetMat4("u_ProjectionView", s_Data.ProjectionViewMatrix);
 		shader->SetMat4("u_Transform", transform);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
+		s_Data.stats.DrawCalls++;
+		s_Data.stats.CubeCount++;
 	}
 
 	void Renderer::DrawColoredCube(const glm::vec3& position, const glm::vec4& color, const glm::vec3& size)
 	{
-		auto shader = s_ShaderLibrary.Get("VertexPos");
+		auto shader = s_Data.ShaderLibrary.Get("Textured3D");
 
 		shader->Bind();
 		shader->SetFloat4("u_Color", color);
+		s_Data.WhiteTexture->Bind();
 
-		// T * S
 		auto tranform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), size);
-		Submit(shader, s_VertexArray, tranform);
+		Submit(shader, s_Data.CubeVertexArray, tranform);
 	}
 
 	void Renderer::DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size)
 	{
+		auto shader = s_Data.ShaderLibrary.Get("Textured3D");
+
+		shader->Bind();
+		shader->SetFloat4("u_Color", { 1.0f, 1.0f, 1.0f, 1.0f });
 		texture->Bind();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
-		Submit(s_ShaderLibrary.Get("Textured3D"), s_VertexArray, transform);
+		Submit(shader, s_Data.CubeVertexArray, transform);
 	}
 
 	void Renderer::DrawSkybox(const Ref<TextureCubeMap>& texture)
 	{
 		RenderCommand::SetDepthFuncLessThanOrEqualTo();
-		auto shader = s_ShaderLibrary.Get("Skybox");
+		auto shader = s_Data.ShaderLibrary.Get("Skybox");
 		shader->Bind();
-		shader->SetMat4("u_Projection", s_SceneData->ProjectionMatrix);
-		shader->SetMat4("u_View", glm::mat4(glm::mat3(s_SceneData->ViewMatrix)));
-		s_VertexArray->Bind();
+		shader->SetMat4("u_Projection", s_Data.ProjectionMatrix);
+		shader->SetMat4("u_View", glm::mat4(glm::mat3(s_Data.ViewMatrix)));
+		s_Data.CubeVertexArray->Bind();
 		texture->Bind();
-		RenderCommand::DrawIndexed(s_VertexArray);
+		RenderCommand::DrawIndexed(s_Data.CubeVertexArray);
+		s_Data.stats.DrawCalls++;
+		s_Data.stats.CubeCount++;
 		RenderCommand::SetDepthFuncLessThan();
+	}
+
+	Renderer::Statistics Renderer::GetStats()
+	{
+		return s_Data.stats;
+	}
+
+	void Renderer::ResetStats()
+	{
+		s_Data.stats.DrawCalls = 0;
+		s_Data.stats.CubeCount = 0;
 	}
 
 }

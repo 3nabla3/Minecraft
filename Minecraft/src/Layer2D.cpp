@@ -45,5 +45,4 @@ void Layer2D::OnUpdate(Hazel::TimeStep ts)
 
 void Layer2D::OnEvent(Hazel::Event& e)
 {
-
 }

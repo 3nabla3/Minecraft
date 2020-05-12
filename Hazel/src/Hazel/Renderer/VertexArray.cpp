@@ -8,17 +8,17 @@ namespace Hazel {
 
 	Ref<VertexArray> VertexArray::Create()
 	{
-        switch (Renderer::GetAPI())
-        {
-        case RendererAPI::API::None:
-            HZ_CORE_ASSERT(false, "RendererAPI::None is not supported!");
-            return nullptr;
-        case RendererAPI::API::OpenGL:
-            return std::make_shared<OpenGLVertexArray>();
-        }
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:
+			HZ_CORE_ASSERT(false, "RendererAPI::None is not supported!");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLVertexArray>();
+		}
 
-        HZ_CORE_ASSERT(false, "Unknown renderer API!");
-        return nullptr;
+		HZ_CORE_ASSERT(false, "Unknown renderer API!");
+		return nullptr;
 	}
 
 }

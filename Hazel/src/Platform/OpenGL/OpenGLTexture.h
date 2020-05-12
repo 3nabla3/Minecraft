@@ -34,11 +34,12 @@ namespace Hazel {
 	class OpenGLTextureCubeMap : public TextureCubeMap
 	{
 	public:
+		OpenGLTextureCubeMap(uint32_t size);
 		OpenGLTextureCubeMap(const std::vector<std::string>& filepaths);
 		virtual ~OpenGLTextureCubeMap();
 
-		inline virtual uint32_t GetWidth() const override { return m_Width; }
-		inline virtual uint32_t GetHeight() const override { return m_Height; }
+		inline virtual uint32_t GetWidth() const override { return m_Size; }
+		inline virtual uint32_t GetHeight() const override { return m_Size; }
 		virtual void SetData(void* data, uint32_t size) override;
 
 		virtual void Bind(uint32_t slot = 0) const override;
@@ -49,7 +50,10 @@ namespace Hazel {
 		}
 	private:
 		std::string m_Path;
-		uint32_t m_Width, m_Height;
+		uint32_t m_Size;
 		uint32_t m_RendererID;
+
+		GLenum m_InternalFormat;
+		GLenum m_DataFormat;
 	};
 }
