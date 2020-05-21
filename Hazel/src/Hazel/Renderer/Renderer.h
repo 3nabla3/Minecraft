@@ -13,6 +13,7 @@ namespace Hazel {
 	public:
 		static void Init();
 		static void Shutdown();
+		static void Flush();
 
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
@@ -26,7 +27,6 @@ namespace Hazel {
 
 		static void DrawColoredCube(const glm::vec3& position, const glm::vec4& color, const glm::vec3& size);
 		static void DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size);
-		static void DrawWhiteCube(const glm::vec3& position);
 
 		static void DrawSkybox(const Ref<TextureCubeMap>& texture);
 
@@ -44,6 +44,8 @@ namespace Hazel {
 
 		static void ResetStats();
 		static Statistics GetStats();
+	private:
+		static void FlushAndReset();
 	};
 
 }

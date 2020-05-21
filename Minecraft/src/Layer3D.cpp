@@ -15,6 +15,8 @@ Layer3D::Layer3D()
 		"assets/skybox/front.jpg",
 		"assets/skybox/back.jpg"
 		});
+
+	m_Controller.m_CameraTranslationSpeed = 50.0f;
 }
 
 
@@ -28,16 +30,11 @@ void Layer3D::OnUpdate(Hazel::TimeStep ts)
 	Hazel::Renderer::ResetStats();
 
 	Hazel::Renderer::BeginScene(m_Controller.GetCamera());
-	for (int x = 0; x < 3; x++)
-		for (int z = 0; z < 3; z++)
-		{
-			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 0.0f, -z * 2.0f }, m_TextureDirt, { 1.0f,1.0f,1.0f });
-			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 10.0f, -z * 2.0f }, m_TextureSand, { 1.0f,1.0f,1.0f });
-			Hazel::Renderer::DrawTexturedCube({ -x * 2.0f , 20.0f, -z * 2.0f }, m_TextureTNT, { 1.0f,1.0f,1.0f });
-			Hazel::Renderer::DrawColoredCube({ -x * 2.0f , 30.0f, -z * 2.0f }, { 1.0f, 0.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f });
-		}
-	Hazel::Renderer::DrawSkybox(m_Skybox);
+	for (uint32_t i = 0; i < 150; i++)
+		for (uint32_t j = 0; j < 150; j++)
+			Hazel::Renderer::DrawTexturedCube({ i * 2.0f, -5.0f, j * 2.0f }, m_TextureDirt, { 1.0f, 1.0f, 1.0f });
 	Hazel::Renderer::EndScene();
+	Hazel::Renderer::DrawSkybox(m_Skybox);
 }
 
 void Layer3D::OnEvent(Hazel::Event& e)

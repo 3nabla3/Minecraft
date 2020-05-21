@@ -1,30 +1,38 @@
 #type vertex
-#version 330 core
+#version 400 core
 
 layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec4 a_Color;
+layout(location = 2) in vec3 a_TexCoord;
+layout(location = 3) in float a_TexIndex;
 
 uniform mat4 u_ProjectionView;
-uniform mat4 u_Transform;
 
-out vec3 v_Position;
+out vec4 v_Color;
+out vec3 v_TexCoord;
+out float v_TexIndex;
 
 void main()
 {
-	v_Position = a_Position;
-	gl_Position = u_ProjectionView * u_Transform * vec4(a_Position, 1.0);
+	v_Color		= a_Color;
+	v_TexCoord	= a_TexCoord;
+	v_TexIndex	= a_TexIndex;
+	
+	gl_Position = u_ProjectionView * vec4(a_Position, 1.0);
 }
 
 #type fragment
-#version 330 core
+#version 400 core
 
 out vec4 color;
 
-uniform samplerCube u_Sample;
-uniform vec4 u_Color;
+in vec4 v_Color;
+in vec3 v_TexCoord;
+in float v_TexIndex;
 
-in vec3 v_Position;
+uniform samplerCube u_Textures[32];
 
 void main()
 {
-	color = texture(u_Sample, v_Position) * u_Color;
+	color = texture(u_Textures[int(v_TexIndex + 0.5)], v_TexCoord) * v_Color;
 }

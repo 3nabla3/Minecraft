@@ -8,7 +8,7 @@ extern Hazel::Application* Hazel::CreateApplication();
 int main(int argc, char** argv)
 {
 	Hazel::Log::Init();
-	HZ_CORE_INFO("Log init");
+	HZ_CORE_INFO("Log initialized");
 
 	HZ_PROFILE_BEGIN_SESSION("Startup", "HazelProfile-Startup.json");
 	auto app = Hazel::CreateApplication();

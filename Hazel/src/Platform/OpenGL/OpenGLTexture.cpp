@@ -171,7 +171,7 @@ namespace Hazel {
 
 	void OpenGLTextureCubeMap::Bind(uint32_t slot) const
 	{
-		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+		glBindTextureUnit(slot, m_RendererID);
 	}
 
 	void OpenGLTextureCubeMap::SetData(void* data, uint32_t size)

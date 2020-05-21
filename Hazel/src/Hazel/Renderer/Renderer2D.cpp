@@ -165,7 +165,7 @@ namespace Hazel {
 		if (s_Data.QuadIndexCount >= Renderer2DData::s_MaxIndices) 
 			FlushAndReset();
 
-		const float textureIndex = 0.0f; // white texture
+		const float textureIndex = 0; // white texture
 		const float tilingFactor = 1.0f;
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
@@ -218,7 +218,7 @@ namespace Hazel {
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		float textureIndex = 0.0f;
+		float textureIndex = 0;
 
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
@@ -229,7 +229,7 @@ namespace Hazel {
 			}
 		}
 
-		if (textureIndex == 0.0f)
+		if (textureIndex == 0)
 		{
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
@@ -284,7 +284,7 @@ namespace Hazel {
 		if (s_Data.QuadIndexCount >= Renderer2DData::s_MaxIndices)
 			FlushAndReset();
 
-		const float textureIndex = 0.0f; // white texture
+		const float textureIndex = 0; // white texture
 		const float tilingFactor = 1.0f;
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
@@ -338,7 +338,7 @@ namespace Hazel {
 
 		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		float textureIndex = 0.0f;
+		float textureIndex = 0;
 
 		for (uint32_t i = 1; i < s_Data.TextureSlotIndex; i++)
 		{
@@ -349,7 +349,7 @@ namespace Hazel {
 			}
 		}
 
-		if (textureIndex == 0.0f)
+		if (textureIndex == 0)
 		{
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;

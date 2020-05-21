@@ -22,6 +22,8 @@ namespace Hazel {
 
 		inline void SetPosition(const glm::vec3& position) { m_CameraPosition = position; }
 		inline void SetRotation(const glm::vec3& rotation) { m_CameraRotation = rotation; }
+	public:
+		float m_CameraTranslationSpeed = 5.0f, m_CameraRotationSensitivity = 0.005f;
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
 	private:
@@ -31,7 +33,6 @@ namespace Hazel {
 		glm::vec3 m_CameraPosition;
 		glm::vec3 m_CameraRotation;
 
-		float m_CameraTranslationSpeed = 5.0f, m_CameraRotationSensitivity = 0.005f;
 		float m_Lastx = -1.0f, m_Lasty = -1.0f;
 		float m_Pitch; // how much up the player is looking in radians
 	};

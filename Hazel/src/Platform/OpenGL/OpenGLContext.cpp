@@ -22,6 +22,9 @@ namespace Hazel {
 		HZ_CORE_INFO("   Vendor: {0}", glGetString(GL_VENDOR));
 		HZ_CORE_INFO("   Renderer: {0}", glGetString(GL_RENDERER));
 		HZ_CORE_INFO("   Version: {0}", glGetString(GL_VERSION));
+		//HZ_CORE_INFO("   Total texture units: {0}", glGetString(GL_MAX_TEXTURE_UNITS));
+		int units;
+		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &units);
 
 	#ifdef HZ_ENABLE_ASSERTS
 		int versionMajor, versionMinor;
