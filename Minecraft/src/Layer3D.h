@@ -12,13 +12,22 @@ public:
 	static Hazel::Ref<Hazel::TextureCubeMap> UploadTexture(const std::string& filepath);
 
 private:
+
+	bool OnKeyPressed(Hazel::KeyPressedEvent& e);
+
 	Hazel::PerspectiveCameraController m_Controller;
 
 	Hazel::Ref<Hazel::TextureCubeMap> m_Skybox;
 
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureDirt;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureSand;
-	Hazel::Ref<Hazel::TextureCubeMap> m_TextureTNT;
+	Hazel::Ref<Hazel::TextureCubeMap> m_TextureGrass;
 
 	float m_LastX = -1.0f, m_LastY = -1.0f;
+
+	float m_FrameTime;
+	float m_Smoothness;
+	float m_MaxHeight;
+
+	bool m_EnableMovements = true;
 };

@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="src\Layer2D.h" />
     <ClInclude Include="src\Layer3D.h" />
+    <ClInclude Include="src\PerlinNoise.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Crosshair.glsl" />

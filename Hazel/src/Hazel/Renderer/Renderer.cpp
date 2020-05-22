@@ -16,10 +16,11 @@ namespace Hazel {
 
 	struct RendererData
 	{
-		constexpr static uint32_t s_MaxQuads = 10000;
+		constexpr static uint32_t s_MaxQuads = 100000; // 1M
 		constexpr static uint32_t s_MaxVerticies = s_MaxQuads * 8;
 		constexpr static uint32_t s_MaxIndices = s_MaxQuads * 36;
-		constexpr static uint32_t s_MaxTextureSlots = 32; // TODO: RenderCaps
+
+		constexpr static uint32_t s_MaxTextureSlots = 192; // TODO: RenderCaps
 
 		Ref<VertexArray> CubeVertexArray;
 		Ref<VertexBuffer> CubeVertexBuffer;
@@ -268,12 +269,10 @@ namespace Hazel {
 		s_Data.Stats.CubeCount++;
 	}
 
-	void Renderer::DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size)
+	void Renderer::DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size, const glm::vec4& tintColor)
 	{
 		if (s_Data.CubeIndexCount >= s_Data.s_MaxIndices)
 			FlushAndReset();
-
-		constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		float textureIndex = 0;
 
@@ -288,6 +287,8 @@ namespace Hazel {
 
 		if (textureIndex == 0)
 		{
+			if (s_Data.TextureSlotIndex == s_Data.s_MaxTextureSlots)
+				FlushAndReset();
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
@@ -299,7 +300,7 @@ namespace Hazel {
 		for (uint32_t i = 0; i < 8; i++)
 		{
 			s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
-			s_Data.CubeVertexBufferPtr->Color = color;
+			s_Data.CubeVertexBufferPtr->Color = tintColor;
 			s_Data.CubeVertexBufferPtr->TexCoord = { s_Data.CubeVertexPositions[i].x, s_Data.CubeVertexPositions[i].y, s_Data.CubeVertexPositions[i].z };
  			s_Data.CubeVertexBufferPtr->TexIndex = textureIndex;
 			s_Data.CubeVertexBufferPtr++;

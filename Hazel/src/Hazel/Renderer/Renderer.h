@@ -26,7 +26,7 @@ namespace Hazel {
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4 transform = glm::mat4(1.0f));
 
 		static void DrawColoredCube(const glm::vec3& position, const glm::vec4& color, const glm::vec3& size);
-		static void DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size);
+		static void DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 		static void DrawSkybox(const Ref<TextureCubeMap>& texture);
 
