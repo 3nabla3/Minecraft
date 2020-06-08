@@ -37,6 +37,9 @@ namespace Hazel {
 		glm::mat4 ProjectionViewMatrix = glm::mat4(1.0f);
 		glm::mat4 ProjectionMatrix = glm::mat4(1.0f);
 		glm::mat4 ViewMatrix = glm::mat4(1.0f);
+		glm::vec3 CameraPosition = glm::vec3(1.0f);
+		glm::vec3 CameraRotation = glm::vec3(1.0f);
+		float FOV;
 
 		std::array<Ref<Texture>, s_MaxTextureSlots> TextureSlots;
 		uint32_t TextureSlotIndex = 1; // 0 = white texture
@@ -142,24 +145,8 @@ namespace Hazel {
 		s_Data.TextureShader = Shader::Create("assets/shaders/Textured3D.glsl");
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->SetIntArray("u_Textures", samplers, s_Data.s_MaxTextureSlots);
-		/*uint32_t cubeMapArray;
-		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &cubeMapArray);
-		glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, cubeMapArray);
-		glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGBA8, 1, 1, 1);*/
 
 		s_Data.TextureSlots[0] = s_Data.WhiteTexture;
-
-		//float vertecies[] = {
-		//	-1.0f, -1.0f, -1.0f, // 0 front bottom left
-		//	 1.0f, -1.0f, -1.0f, // 1 front bottom right
-		//	 1.0f,  1.0f, -1.0f, // 2 front top    right
-		//	-1.0f,  1.0f, -1.0f, // 3 front top    left
-		//				   
-		//	-1.0f, -1.0f,  1.0f, // 4 rear  bottom left
-		//	 1.0f, -1.0f,  1.0f, // 5 rear  bottom right
-		//	 1.0f,  1.0f,  1.0f, // 6 rear  top    right
-		//	-1.0f,  1.0f,  1.0f  // 7 rear  top    left
-		//};
 
 		s_Data.CubeVertexPositions[0] = { -1.0f, -1.0f, -1.0f, 1.0f}; // 0 front bottom left
 		s_Data.CubeVertexPositions[1] = {  1.0f, -1.0f, -1.0f, 1.0f}; // 1 front bottom right
@@ -183,6 +170,9 @@ namespace Hazel {
 
 	void Renderer::BeginScene(const PerspectiveCamera& camera)
 	{
+		s_Data.CameraPosition = camera.GetPosition();
+		s_Data.CameraRotation = camera.GetRotation();
+		s_Data.FOV = glm::radians(camera.GetFOV());
 		s_Data.ProjectionViewMatrix = camera.GetProjectionViewMatrix();
 		s_Data.ProjectionMatrix = camera.GetProjectionMatrix();
 		s_Data.ViewMatrix = camera.GetViewMatrix();
@@ -198,7 +188,7 @@ namespace Hazel {
 
 	void Renderer::EndScene()
 	{
-		uint32_t dataSize = (uint8_t*)s_Data.CubeVertexBufferPtr - (uint8_t*)s_Data.CubeVertexBufferBase; 
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.CubeVertexBufferPtr - (uint8_t*)s_Data.CubeVertexBufferBase); 
 		if (dataSize != 0)
 		{
 			s_Data.CubeVertexBuffer->SetData(s_Data.CubeVertexBufferBase, dataSize);
@@ -249,65 +239,93 @@ namespace Hazel {
 		s_Data.Stats.CubeCount++;
 	}
 
+	static bool InFOV(const glm::vec3& objPos)
+	{
+		float zDist = objPos.z - s_Data.CameraPosition.z;
+		float xDist = objPos.x - s_Data.CameraPosition.x;
+		float angle = std::atanf(xDist / zDist);
+
+		if (zDist > 0) angle += 3.1415f;
+		else if (angle < 0) angle += 3.1415f * 2;
+
+		float offset = s_Data.CameraRotation.y;
+		float bottomBound = -s_Data.FOV + offset;
+		float topBound = s_Data.FOV + offset;
+
+		if (bottomBound < 0 && angle > bottomBound + 3.1415f * 2)
+			return true;
+
+		if (topBound > 3.1415f * 2 && angle < topBound - 3.1415f * 2)
+			return true;
+
+		return -s_Data.FOV + + offset < angle && angle < s_Data.FOV + + offset;
+	}
+
 	void Renderer::DrawColoredCube(const glm::vec3& position, const glm::vec4& color, const glm::vec3& size)
 	{
-		const float textureIndex = 0;
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::scale(glm::mat4(1.0f), size);
-
-		for (uint32_t i = 0; i < 8; i++)
+		if (InFOV(position))
 		{
-			s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
-			s_Data.CubeVertexBufferPtr->Color = color;
-			s_Data.CubeVertexBufferPtr->TexCoord = { s_Data.CubeVertexPositions[i].x, s_Data.CubeVertexPositions[i].y, s_Data.CubeVertexPositions[i].z };
-			s_Data.CubeVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.CubeVertexBufferPtr++;
+			const float textureIndex = 0;
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+				glm::scale(glm::mat4(1.0f), size);
+
+			for (uint32_t i = 0; i < 8; i++)
+			{
+				s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
+				s_Data.CubeVertexBufferPtr->Color = color;
+				s_Data.CubeVertexBufferPtr->TexCoord = { s_Data.CubeVertexPositions[i].x, s_Data.CubeVertexPositions[i].y, s_Data.CubeVertexPositions[i].z };
+				s_Data.CubeVertexBufferPtr->TexIndex = textureIndex;
+				s_Data.CubeVertexBufferPtr++;
+			}
+
+			s_Data.CubeIndexCount += 36;
+			s_Data.Stats.CubeCount++;
 		}
-		
-		s_Data.CubeIndexCount += 36;
-		s_Data.Stats.CubeCount++;
 	}
 
 	void Renderer::DrawTexturedCube(const glm::vec3& position, const Ref<TextureCubeMap>& texture, const glm::vec3& size, const glm::vec4& tintColor)
 	{
-		if (s_Data.CubeIndexCount >= s_Data.s_MaxIndices)
-			FlushAndReset();
-
-		float textureIndex = 0;
-
-		for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+		if (InFOV(position))
 		{
-			if (*s_Data.TextureSlots[i].get() == *texture.get())
-			{
-				textureIndex = (float)i;
-				break;
-			}
-		}
-
-		if (textureIndex == 0)
-		{
-			if (s_Data.TextureSlotIndex == s_Data.s_MaxTextureSlots)
+			if (s_Data.CubeIndexCount >= s_Data.s_MaxIndices)
 				FlushAndReset();
-			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
-			s_Data.TextureSlotIndex++;
+
+			float textureIndex = 0;
+
+			for (uint32_t i = 0; i < s_Data.TextureSlotIndex; i++)
+			{
+				if (*s_Data.TextureSlots[i].get() == *texture.get())
+				{
+					textureIndex = (float)i;
+					break;
+				}
+			}
+
+			if (textureIndex == 0)
+			{
+				if (s_Data.TextureSlotIndex == s_Data.s_MaxTextureSlots)
+					FlushAndReset();
+				textureIndex = (float)s_Data.TextureSlotIndex;
+				s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+				s_Data.TextureSlotIndex++;
+			}
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+				glm::scale(glm::mat4(1.0f), size);
+
+			for (uint32_t i = 0; i < 8; i++)
+			{
+				s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
+				s_Data.CubeVertexBufferPtr->Color = tintColor;
+				s_Data.CubeVertexBufferPtr->TexCoord = { s_Data.CubeVertexPositions[i].x, s_Data.CubeVertexPositions[i].y, s_Data.CubeVertexPositions[i].z };
+				s_Data.CubeVertexBufferPtr->TexIndex = textureIndex;
+				s_Data.CubeVertexBufferPtr++;
+			}
+
+			s_Data.CubeIndexCount += 36;
+			s_Data.Stats.CubeCount++;
 		}
-
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-			glm::scale(glm::mat4(1.0f), size);
-
-		for (uint32_t i = 0; i < 8; i++)
-		{
-			s_Data.CubeVertexBufferPtr->Position = transform * s_Data.CubeVertexPositions[i];
-			s_Data.CubeVertexBufferPtr->Color = tintColor;
-			s_Data.CubeVertexBufferPtr->TexCoord = { s_Data.CubeVertexPositions[i].x, s_Data.CubeVertexPositions[i].y, s_Data.CubeVertexPositions[i].z };
- 			s_Data.CubeVertexBufferPtr->TexIndex = textureIndex;
-			s_Data.CubeVertexBufferPtr++;
-		}
-
-		s_Data.CubeIndexCount += 36;
-		s_Data.Stats.CubeCount++;
 	}
 
 	void Renderer::DrawSkybox(const Ref<TextureCubeMap>& texture)

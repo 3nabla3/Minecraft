@@ -22,6 +22,7 @@ private:
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureDirt;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureSand;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureGrass;
+	Hazel::Ref<Hazel::TextureCubeMap> m_TextureOak;
 
 	float m_LastX = -1.0f, m_LastY = -1.0f;
 

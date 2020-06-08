@@ -4,13 +4,14 @@
 namespace Hazel {
 
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio)
-		:m_ProjectionMatrix(glm::perspective(fov, aspectRatio, 0.1f, 1500.0f)), m_ViewMatrix(1.0f)
+		:m_ProjectionMatrix(glm::perspective(fov, aspectRatio, 0.1f, 1500.0f)), m_ViewMatrix(1.0f), m_Fov(fov)
 	{
 		m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
 	void PerspectiveCamera::SetProjection(float fov, float aspectRatio)
 	{
+		m_Fov = fov;
 		m_ProjectionMatrix = glm::perspective(fov, aspectRatio, 0.1f, 150.0f);
 		m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}

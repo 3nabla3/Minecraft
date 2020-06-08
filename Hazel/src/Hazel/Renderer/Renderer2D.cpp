@@ -124,7 +124,7 @@ namespace Hazel {
 		HZ_PROFILE_FUNCTION();
 
 		// size in bytes of the total Vertecies of the VertexBuffer
-		uint32_t dataSize = (uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase;
+		uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
 		if (dataSize != 0)
 		{
 			s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);

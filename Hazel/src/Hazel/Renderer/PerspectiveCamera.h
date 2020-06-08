@@ -20,9 +20,11 @@ namespace Hazel {
 		const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
 		const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		const glm::mat4& GetProjectionViewMatrix() const { return m_ProjectionViewMatrix; }
+		const float GetFOV() const { return m_Fov; }
 	private:
 		void RecalculateViewMatrix();
 	private:
+		float m_Fov;
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix;
 		glm::mat4 m_ProjectionViewMatrix;

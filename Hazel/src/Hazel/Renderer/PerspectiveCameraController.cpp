@@ -69,6 +69,9 @@ namespace Hazel {
 
 		m_CameraRotation.x = std::clamp(m_CameraRotation.x, -3.1415f / 2.0f, 3.1415f / 2.0f);
 
+		if (m_CameraRotation.y > 3.1415f * 2) m_CameraRotation.y -= 3.1415f * 2;
+		if (m_CameraRotation.y < 0) m_CameraRotation.y += 3.1415f * 2;
+
 		return false;
 	}
 
