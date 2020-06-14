@@ -144,6 +144,7 @@
     <ClCompile Include="src\Minecraft.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Chunk.h" />
     <ClInclude Include="src\Layer2D.h" />
     <ClInclude Include="src\Layer3D.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />

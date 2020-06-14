@@ -1,5 +1,6 @@
 #include "hzpch.h"
 #include "RendererAPI.h"
+#include <glad/glad.h>
 
 namespace Hazel {
 

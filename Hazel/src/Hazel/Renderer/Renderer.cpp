@@ -20,7 +20,7 @@ namespace Hazel {
 		constexpr static uint32_t s_MaxVerticies = s_MaxQuads * 8;
 		constexpr static uint32_t s_MaxIndices = s_MaxQuads * 36;
 
-		constexpr static uint32_t s_MaxTextureSlots = 192; // TODO: RenderCaps
+		constexpr static uint32_t s_MaxTextureSlots = 192; //TODO: Render caps
 
 		Ref<VertexArray> CubeVertexArray;
 		Ref<VertexBuffer> CubeVertexBuffer;
