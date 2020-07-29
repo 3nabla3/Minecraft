@@ -27,8 +27,8 @@ private:
 	float m_LastX = -1.0f, m_LastY = -1.0f;
 
 	float m_FrameTime;
-	float m_Smoothness;
-	float m_MaxHeight;
+	float m_SliderVal2;
+	float m_SliderVal1;
 
 	bool m_EnableMovements = true;
 };

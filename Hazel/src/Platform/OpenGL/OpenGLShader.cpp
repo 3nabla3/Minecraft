@@ -55,7 +55,7 @@ namespace Hazel {
 
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
-
+		
 		if (in)
 		{
 			in.seekg(0, std::ios::end);

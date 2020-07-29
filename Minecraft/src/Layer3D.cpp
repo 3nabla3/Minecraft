@@ -1,10 +1,26 @@
 #include "Layer3D.h"
 #include "PerlinNoise.hpp"
 #include "Chunk.h"
+#include <fstream>
 
 Layer3D::Layer3D()
-	:Layer("Layer 3D"), m_Controller(45.0f, 1.778f, { 0.0f, 3.0f, 0.0f }), m_Smoothness(150.0f), m_MaxHeight(2)
+	:Layer("Layer 3D"), m_Controller(45.0f, 1.778f, { 0.0f, 3.0f, 0.0f })
 {
+	// load the values for debugging from disk
+	std::string settings;
+	std::ifstream in("minecraftSettings.txt", std::ios::in);
+	if (in.is_open())
+	{
+		std::getline(in, settings);
+		size_t index = settings.find("=") + 2;
+		HZ_TRACE("{0}", settings.substr(index));
+		m_SliderVal1 = std::stof(settings.substr(index));
+		std::getline(in, settings);
+		index = settings.find("=") + 2;
+		m_SliderVal2 = std::stof(settings.substr(index));
+	}
+	in.close();
+
 	m_TextureDirt = UploadTexture("dirt");
 	m_TextureSand = UploadTexture("sand");
 	m_TextureGrass = UploadTexture("grass");
@@ -31,22 +47,36 @@ void Layer3D::OnUpdate(Hazel::TimeStep ts)
 	if (m_EnableMovements)
 		m_Controller.OnUpdate(ts);
 
-	siv::BasicPerlinNoise<float> gen(0);
+	siv::BasicPerlinNoise<float> gen;
 
 	Hazel::RenderCommand::SetClearColor({ 0.0f, 1.0f, 0.0f, 1.0f });
 	Hazel::RenderCommand::Clear();
 	Hazel::Renderer::ResetStats();
 
 	Hazel::Renderer::BeginScene(m_Controller.GetCamera());
-	float runningx = 0.0f;
-	
-	for (float i = 0; i < 10; i+=0.1f)
+	float runningX = 0.0f;
+	float runningZ = 0.0f;
+	float maxX = 200.0f;
+	float maxZ = 200.0f;
+
+	Hazel::Renderer::DrawColoredCube({ -2, -2, -2 }, { 1, 1, 1, 1 }, { 1, 1, 1 });
+
+	int temp1 = (int)m_SliderVal1;
+	int temp2 = (int)m_SliderVal2;
+	while (runningZ < maxZ)
 	{
-		float result = gen.noise1D_0_1(i);
-		HZ_TRACE("{0}, {1}", result, i);
-		Chunk c((int)result, { runningx, 1.0f, 1.0f }, m_TextureGrass);
-		c.Display();
-		runningx += result;
+		while (runningX < maxX)
+		{
+			float arg1 = runningX / 100.0f;
+			float arg2 = runningZ / 100.0f;
+			int randBlockSize = (int)(gen.noise2D_0_1(arg1, arg2) * 10);
+			//HZ_TRACE("Rand size: {0};\tArg: {1}", randBlockSize, arg);
+			Chunk({ 5, randBlockSize, 5 }, { runningX, 0, runningZ }, m_TextureGrass).Display();
+
+			runningX += 5 * 2 + temp1;
+		}
+		runningZ += 5 * 2 + temp2;
+		runningX = 0.0f;
 	}
 
 	Hazel::Renderer::EndScene();
@@ -83,8 +113,8 @@ void Layer3D::OnImGuiRender()
 	End();
 
 	Begin("Change noise Settings");
-	SliderFloat("Max Height", &m_MaxHeight, 1, 10);
-	SliderFloat("Smoothness", &m_Smoothness, 5, 300);
+	SliderFloat("Val 1", &m_SliderVal1, 0, 10);
+	SliderFloat("Val 2", &m_SliderVal2, 0, 10);
 	End();
 
 	Begin("Cam info");
@@ -97,6 +127,15 @@ void Layer3D::OnImGuiRender()
 	Text("Camera Y-Rotation %f rad", m_Controller.GetCamera().GetRotation().y);
 	Text("Camera Z-Rotation %f rad", m_Controller.GetCamera().GetRotation().z);
 	End();
+
+	// write the values for debugging to disk
+	std::ofstream in("minecraftSettings.txt", std::ios::out);
+	if (in.is_open())
+	{
+		in << "SliderVal1 = " << m_SliderVal1 << "\n";
+		in << "SliderVal2 = " << m_SliderVal2;
+	}
+	in.close();
 }
 
 Hazel::Ref<Hazel::TextureCubeMap> Layer3D::UploadTexture(const std::string& name)

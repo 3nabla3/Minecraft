@@ -241,6 +241,8 @@ namespace Hazel {
 
 	static bool InFOV(const glm::vec3& objPos)
 	{
+		return true;
+		// TODO: Make the x roll FOV check
 		float zDist = objPos.z - s_Data.CameraPosition.z;
 		float xDist = objPos.x - s_Data.CameraPosition.x;
 		float angle = std::atanf(xDist / zDist);
