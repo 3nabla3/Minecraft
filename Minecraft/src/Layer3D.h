@@ -1,6 +1,7 @@
 #pragma once
 #include <Hazel.h>
 #include <imgui/imgui.h>
+#include "Terrain.h"
 
 class Layer3D : public Hazel::Layer
 {
@@ -23,6 +24,8 @@ private:
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureSand;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureGrass;
 	Hazel::Ref<Hazel::TextureCubeMap> m_TextureOak;
+
+	Terrain m_Terrain;
 
 	float m_LastX = -1.0f, m_LastY = -1.0f;
 

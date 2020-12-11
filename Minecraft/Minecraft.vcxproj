@@ -84,6 +84,7 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -103,6 +104,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +125,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,12 +145,14 @@
     <ClCompile Include="src\Layer2D.cpp" />
     <ClCompile Include="src\Layer3D.cpp" />
     <ClCompile Include="src\Minecraft.cpp" />
+    <ClCompile Include="src\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Chunk.h" />
     <ClInclude Include="src\Layer2D.h" />
     <ClInclude Include="src\Layer3D.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
+    <ClInclude Include="src\Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\Crosshair.glsl" />

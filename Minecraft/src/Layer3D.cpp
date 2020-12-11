@@ -36,50 +36,24 @@ Layer3D::Layer3D()
 		});
 
 	m_Controller.m_CameraTranslationSpeed = 50.0f;
+	m_Terrain = Terrain(300, 300, m_TextureGrass);
 }
 
 void Layer3D::OnUpdate(Hazel::TimeStep ts)
 {
 	m_FrameTime = ts.GetMiliseconds();
-
-	const int size = 150;
-
 	if (m_EnableMovements)
 		m_Controller.OnUpdate(ts);
-
-	siv::BasicPerlinNoise<float> gen;
 
 	Hazel::RenderCommand::SetClearColor({ 0.0f, 1.0f, 0.0f, 1.0f });
 	Hazel::RenderCommand::Clear();
 	Hazel::Renderer::ResetStats();
 
 	Hazel::Renderer::BeginScene(m_Controller.GetCamera());
-	float runningX = 0.0f;
-	float runningZ = 0.0f;
-	float maxX = 200.0f;
-	float maxZ = 200.0f;
-
 	Hazel::Renderer::DrawColoredCube({ -2, -2, -2 }, { 1, 1, 1, 1 }, { 1, 1, 1 });
-
-	int temp1 = (int)m_SliderVal1;
-	int temp2 = (int)m_SliderVal2;
-	while (runningZ < maxZ)
-	{
-		while (runningX < maxX)
-		{
-			float arg1 = runningX / 100.0f;
-			float arg2 = runningZ / 100.0f;
-			int randBlockSize = (int)(gen.noise2D_0_1(arg1, arg2) * 10);
-			//HZ_TRACE("Rand size: {0};\tArg: {1}", randBlockSize, arg);
-			Chunk({ 5, randBlockSize, 5 }, { runningX, 0, runningZ }, m_TextureGrass).Display();
-
-			runningX += 5 * 2 + temp1;
-		}
-		runningZ += 5 * 2 + temp2;
-		runningX = 0.0f;
-	}
-
+	m_Terrain.Render();
 	Hazel::Renderer::EndScene();
+
 	Hazel::Renderer::DrawSkybox(m_Skybox);
 }
 
