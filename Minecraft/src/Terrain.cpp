@@ -11,16 +11,16 @@ Terrain::Terrain(int maxX, int maxZ, Hazel::Ref<Hazel::TextureCubeMap> texture)
 	HZ_WARN("Seed is: {0}", m_Seed);
 }
 
-void Terrain::Render()
+void Terrain::Render(float maxHeight, float freq)
 {
 	siv::BasicPerlinNoise<float> gen(m_Seed);
 	while (m_RunningZ < m_MaxZ)
 	{
 		while (m_RunningX < m_MaxX)
 		{
-			float arg1 = m_RunningX / 100.0f;
-			float arg2 = m_RunningZ / 100.0f;
-			int randBlockSize = (int)(gen.noise2D_0_1(arg1, arg2) * 10);
+			float arg1 = m_RunningX / 100.0f * freq;
+			float arg2 = m_RunningZ / 100.0f * freq;
+			int randBlockSize = (int)(gen.noise2D_0_1(arg1, arg2) * maxHeight);
 			//HZ_TRACE("Rand size: {0};\tArg: {1}", randBlockSize, arg);
 			Chunk({ m_ChunkWidth, randBlockSize, m_ChunkLength }, { m_RunningX, 0, m_RunningZ }, m_Texture).Display();
 

@@ -50,8 +50,8 @@ void Layer3D::OnUpdate(Hazel::TimeStep ts)
 	Hazel::Renderer::ResetStats();
 
 	Hazel::Renderer::BeginScene(m_Controller.GetCamera());
-	Hazel::Renderer::DrawColoredCube({ -2, -2, -2 }, { 1, 1, 1, 1 }, { 1, 1, 1 });
-	m_Terrain.Render();
+	//Hazel::Renderer::DrawColoredCube({ -2, -2, -2 }, { 1, 1, 1, 1 }, { 1, 1, 1 });
+	m_Terrain.Render(m_SliderVal1, m_SliderVal2);
 	Hazel::Renderer::EndScene();
 
 	Hazel::Renderer::DrawSkybox(m_Skybox);
@@ -87,8 +87,8 @@ void Layer3D::OnImGuiRender()
 	End();
 
 	Begin("Change noise Settings");
-	SliderFloat("Val 1", &m_SliderVal1, 0, 10);
-	SliderFloat("Val 2", &m_SliderVal2, 0, 10);
+	SliderFloat("Val 1", &m_SliderVal1, 0, 100);
+	SliderFloat("Val 2", &m_SliderVal2, 0, 100);
 	End();
 
 	Begin("Cam info");

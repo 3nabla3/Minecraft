@@ -6,7 +6,7 @@ class Terrain
 public:
 	Terrain() = default;
 	Terrain(int maxX, int maxZ, Hazel::Ref<Hazel::TextureCubeMap> texture);
-	void Render();
+	void Render(float maxHeight, float freq);
 private:
 	uint32_t m_Seed;
 
