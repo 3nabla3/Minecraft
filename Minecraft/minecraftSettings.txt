@@ -1,2 +1,2 @@
-SliderVal1 = 10
-SliderVal2 = 16.399
+SliderVal1 = 9.325
+SliderVal2 = 12.862
