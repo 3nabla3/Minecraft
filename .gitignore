@@ -2,9 +2,9 @@
 .vs/
 bin/
 bin-int/
-Minecraft/minecraftSettings.txt
-Minecraft/imgui.ini
 
 # Files
 *.user
 *.json
+Minecraft/minecraftSettings.txt
+Minecraft/imgui.ini
