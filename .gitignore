@@ -3,6 +3,7 @@
 bin/
 bin-int/
 Minecraft/minecraftSettings.txt
+Minecraft/imgui.ini
 
 # Files
 *.user
