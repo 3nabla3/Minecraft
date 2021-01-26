@@ -1,2 +1,0 @@
-SliderVal1 = 68.489
-SliderVal2 = 36.334
