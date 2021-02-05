@@ -2,6 +2,7 @@
 #include "PerlinNoise.hpp"
 #include "Chunk.h"
 #include <fstream>
+#include <windows.h>
 
 Layer3D::Layer3D()
 	:Layer("Layer 3D"), m_Controller(45.0f, 1.778f, { 0.0f, 3.0f, 0.0f })
